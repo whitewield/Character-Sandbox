@@ -44,7 +44,9 @@ public class Player : MonoBehaviour {
 		if (Input.GetKey (KeyCode.RightArrow) || Input.GetKey (KeyCode.D)) {
 			if (speed < 0) {
 				speed += drag * 2 * dt;
-				animator.Play ("playerSkid");
+				if (grounded) {
+					animator.Play ("playerSkid");
+				}
 				if (speed >= 0) {
 					speed = 0;
 					if (grounded) {
@@ -73,7 +75,9 @@ public class Player : MonoBehaviour {
 		if (Input.GetKey (KeyCode.LeftArrow) || Input.GetKey (KeyCode.A)) {
 			if (speed > 0) {
 				speed -= drag * 2 * dt;
-				animator.Play ("playerSkid");
+				if (grounded) {
+					animator.Play ("playerSkid");
+				}
 				if (speed <= 0){
 					speed = 0;
 					if (grounded) {
@@ -119,9 +123,9 @@ public class Player : MonoBehaviour {
 			
 		// now let's figure out the jump stuff
 
-		//check if object is on gorund
+		//check if object is on ground via an overlap circle checking for the ground layer from around the object's feet.
 		if (!justJumped) {
-			grounded = Physics2D.OverlapCircle (new Vector2 (transform.position.x, transform.position.y - .5f), groundCheckCircRad, groundLayer);
+			grounded = Physics2D.OverlapCircle (new Vector2 (transform.position.x, transform.position.y - transform.GetComponent<SpriteRenderer>().bounds.size.y/2), groundCheckCircRad, groundLayer);
 			Debug.Log ("gorunded");
 		} else {
 			grounded = false;
@@ -158,7 +162,7 @@ public class Player : MonoBehaviour {
 			accel = 20;
 			jumpSpeed = 20;
 			drag = 25;
-			myBody.gravityScale = 2;
+			myBody.gravityScale = 5;
 			break;
 		case PlayerType.normal:
 			maxSpeed = 8;
