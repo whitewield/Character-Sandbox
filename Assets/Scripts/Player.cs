@@ -37,11 +37,14 @@ public class Player : MonoBehaviour {
 	void Update () {
 		//just a shortcut to make my life easier
 		dt = Time.deltaTime;
+
+		//making sure speed is set to what it should be at the start frame after physics calcs have taken place between frames.
 		speed = myBody.velocity.x;
 
 
 		//key input for left and right, we modify speed by acceleration if necessary
 		if (Input.GetKey (KeyCode.RightArrow) || Input.GetKey (KeyCode.D)) {
+			//if we're moving opposite, let's apply drag until it's time to turn
 			if (speed < 0) {
 				speed += drag * 2 * dt;
 				if (grounded) {
@@ -54,6 +57,7 @@ public class Player : MonoBehaviour {
 					}
 
 				}
+				//otherwise let's run for it wahoo
 			} else {
 				if (speed < maxSpeed) {
 					speed += accel * dt;
@@ -61,6 +65,7 @@ public class Player : MonoBehaviour {
 					speed = maxSpeed;
 				}
 				if (grounded) {
+					//if we're on the ground, we should also change our animations.
 					animator.Play ("playerRun");
 					if (transform.localScale.x == 1) {
 						Vector3 myScale = transform.localScale;
@@ -132,18 +137,21 @@ public class Player : MonoBehaviour {
 		}
 
 		if((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W)) && grounded && !justJumped) {
-			
+			//if we're on the ground and haven't just jumped, we'll jump. we'll use 'justjumped' to tell our anims not to switch unless it's time.
 			justJumped = true;
 			myBody.velocity = new Vector2 (speed, jumpSpeed);
 			grounded = false;
+			//switch to jump anim.
 			animator.Play ("playerJump");
 		}
 			
 		if (!grounded && myBody.velocity.y <= 0) {
+			//make us play a 'falling' animation if we are on the way down.
 			justJumped = false;
 			animator.Play ("playerFall");
 		}
 
+		//apply x velocity changes.
 		myBody.velocity = new Vector2 (speed, myBody.velocity.y);
 
 
@@ -158,10 +166,10 @@ public class Player : MonoBehaviour {
 			
 		switch(playerType) {
 		case PlayerType.quick:
-			maxSpeed = 10;
-			accel = 20;
+			maxSpeed = 12;
+			accel = 40;
 			jumpSpeed = 20;
-			drag = 25;
+			drag = 40;
 			myBody.gravityScale = 5;
 			break;
 		case PlayerType.normal:
@@ -173,7 +181,7 @@ public class Player : MonoBehaviour {
 			break;
 		case PlayerType.slow:
 			maxSpeed = 4;
-			accel = 8;
+			accel = 4;
 			jumpSpeed = 19;
 			drag = 20;
 			myBody.gravityScale = 5;
